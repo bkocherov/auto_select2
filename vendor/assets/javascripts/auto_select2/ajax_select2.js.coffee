@@ -82,6 +82,9 @@ jQuery ($) ->
           ,
           results: (data, page) ->
             more = (page * limit) < data.total
+            if data.total == 1 and not $input.data('s2-clearing') and not $input.select2("val")
+              $input.select2("val", data.items[0].id)
+            $input.data('s2-clearing', false)
             return { results: data.items, more: more }
         },
         initSelection : (element, callback) ->
@@ -118,15 +121,20 @@ jQuery ($) ->
         s2FullOptions = $.extend({}, s2DefaultOptions, s2UserOptions)
 
       $input.select2(s2FullOptions)
+        .on "change", (e) ->
+          $inputs.each ->
+            $in = $(this)
+            if $in != $input and $in.select2("val") == ''
+              $in.select2("search", "").select2("close")
+
+        .on "select2-clearing", (e) ->
+          $(e.target).data("s2-clearing", true)
 
       return
     return
   initAutoAjaxSelect2()
 
   $body = $('body')
-  $body.on 'ajaxSuccess', ->
-    initAutoAjaxSelect2()
-    return
 
   $body.on 'cocoon:after-insert', ->
     initAutoAjaxSelect2()
