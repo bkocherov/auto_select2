@@ -52,6 +52,7 @@ jQuery ($) ->
       else
         formatResultFunc = formatResult
       s2DefaultOptions = {
+        cache: true
         allowClear: true
         multiple: false
         formatSelection: formatSelectionFunc
